@@ -145,7 +145,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/joshmarcelin/Stuff/school/capstone/project/parking-predictor/persistence/prisma/generated/client",
+      "value": "C:\\Users\\zoehi\\Spring_2025\\Capstone\\Parking-Predictor-2025\\persistence\\prisma\\generated\\client",
       "fromEnvVar": null
     },
     "config": {
@@ -154,7 +154,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "darwin-arm64",
+        "value": "windows",
         "native": true
       }
     ],
@@ -172,7 +172,7 @@ const config = {
     "db"
   ],
   "activeProvider": "mysql",
-  "postinstall": false,
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
