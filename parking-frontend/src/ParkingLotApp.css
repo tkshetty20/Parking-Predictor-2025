@@ -1,0 +1,97 @@
+html, body, #root, .App {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .parking-app {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    max-width: none;
+    margin: 0;
+  }
+  
+  .app-header {
+    background-color: #8B0000;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    flex-shrink: 0;
+  }
+  
+  .app-content {
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden;
+  }
+  
+  .sidebar {
+    width: 300px;
+    background-color: #f0f0f0;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .map-container {
+    flex-grow: 1;
+    height: 100%;
+    z-index: 1;
+  }
+  
+  /* Rest of the previous CSS remains the same */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+  }
+  
+  .app-header h1 {
+    margin: 0;
+  }
+  
+  .login-btn {
+    background-color: white;
+    color: #8B0000;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+  }
+  
+  .location-selector {
+    margin-bottom: 20px;
+  }
+  
+  .location-selector label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .location-selector select {
+    width: 100%;
+    padding: 10px;
+  }
+  
+  .lot-info {
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 5px;
+  }
+  
+  .lot-full {
+    background-color: #ffdddd;
+    border: 1px solid #ff0000;
+  }
+  
+  .lot-available {
+    background-color: #ddffdd;
+    border: 1px solid #00ff00;
+  }
+  
+  .recommendation {
+    background-color: #e6f2ff;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 20px;
+  }
