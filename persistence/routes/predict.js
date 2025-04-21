@@ -36,11 +36,7 @@ async function createSessionDB(sessionData) {
 
 async function callModel(garageTimes) {
     try {
-        const response = await axios.post('http://127.0.0.1:5000/predict', {
-            garage1: garageTimes.garage1,
-            garage2: garageTimes.garage2,
-            garage3: garageTimes.garage3
-        });
+        const response = await axios.post('http://127.0.0.1:5000/predict', garageTimes);
         return response.data;
     } catch (error) {
         throw error;

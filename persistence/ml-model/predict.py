@@ -195,12 +195,21 @@ def predict():
         'garage3': 'y14'
     }
 
-    data = request.json
+    data = request.get_json(force=True)
+
+    print("Request content type:", request.content_type)
+    print("Raw body:", request.data)
+    print("Parsed JSON:", request.get_json(silent=True))
+
 
     # Ensure live_data has 'occupancy' key and it's not empty
     if 'occupancy' not in live_data or not live_data['occupancy']:
         print("No occupancy data found in live_data")
         return jsonify({'error': 'No occupancy data found'}), 400
+    
+    travel_times = data.get("travelTimes", {})
+    priority = data.get("priority", "occupancy")
+    distances = data.get("distances", {})
 
     # Prepare the data and make predictions
     garage_details = {}
@@ -216,7 +225,12 @@ def predict():
             input_data = np.array([processed_data])
 
             # Make prediction
-            time_to_garage = data.get(garage_id)
+            time_to_garage = travel_times.get(garage_id)
+
+            try:
+                time_to_garage = float(time_to_garage)
+            except (TypeError, ValueError):
+                return jsonify({'error': f'Invalid travel time for {garage_id}: {travel_times}'}), 400
 
             prediction = model.predict(input_data)
             interpolated_value = interpolate_prediction(
@@ -226,13 +240,53 @@ def predict():
 
             garage_details[garage_id] = {
                 "travel_time": time_to_garage,
-                "expected_occupancy": unscaled_value
+                "expected_occupancy": unscaled_value,
+                "distance": distances.get(garage_id, float("inf"))
             }
+
+    # Define weights based on user's selected priority
+    weights = {
+        'occupancy': {'occupancy': 0.6, 'time': 0.2, 'distance': 0.2},
+        'time':      {'occupancy': 0.2, 'time': 0.6, 'distance': 0.2},
+        'distance':  {'occupancy': 0.2, 'time': 0.2, 'distance': 0.6},
+    }
+
+    w = weights.get(priority, weights['occupancy'])  # fallback to occupancy
+
+    # Normalize scores for fair comparison
+    # Invert time/distance so lower is better, occupancy stays as-is
+    max_occ = max(g["expected_occupancy"] for g in garage_details.values())
+    max_time = max(g["travel_time"] for g in garage_details.values())
+    max_dist = max(g["distance"] for g in garage_details.values())
+
+    # Avoid divide-by-zero
+    max_time = max_time or 1
+    max_dist = max_dist or 1
+    max_occ = max_occ or 1
+
+    # Score each garage
+    scored_garages = {}
+    for garage_id, data in garage_details.items():
+        norm_occ = data["expected_occupancy"] / max_occ
+        norm_time = 1 - (data["travel_time"] / max_time)
+        norm_dist = 1 - (data["distance"] / max_dist)
+
+        score = (
+            norm_occ * w['occupancy'] +
+            norm_time * w['time'] +
+            norm_dist * w['distance']
+        )
+
+        scored_garages[garage_id] = score
+
+    # Pick garage with highest total score
+    recommendation = max(scored_garages.items(), key=lambda g: g[1])[0]
+    
 
     # Construct the final response
     response_data = {
         "user": 1,  # Assuming a static user ID for now
-        "recommendation": "TEMP",  # Placeholder for recommendation
+        "recommendation": recommendation,  # Placeholder for recommendation
         "garage1": garage_details.get('garage1', {}),
         "garage2": garage_details.get('garage2', {}),
         "garage3": garage_details.get('garage3', {})

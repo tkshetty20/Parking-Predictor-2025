@@ -205,17 +205,29 @@ const ParkingLotApp = () => {
 
       const results = await Promise.all(routePromises);
       
-      // Prepare travel times for prediction
+      // Prepare travel times and distances for prediction
       const travelTimes = {};
-      let i = 1
-      results.forEach(route => {
-        travelTimes[`garage${i}`] = route.travelTime;
-        i++;
+      const distances = {};
+      results.forEach((route, index) => {
+        travelTimes[`garage${index + 1}`] = route.travelTime;
+        distances[`garage${index + 1}`] = parseFloat(route.distance.replace(" mi", ""));
       });
 
       // Get predictions based on travel times
       try {
-        const predictionResponse = await axios.post('http://localhost:3000/predict', travelTimes);
+        const predictionResponse = await axios.post(
+          'http://localhost:3000/predict', 
+          {
+            travelTimes,
+            distances,
+            priority: recommendationPriority
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        );
         
         // Update parking lots with predictions
         const predictions = predictionResponse.data;
