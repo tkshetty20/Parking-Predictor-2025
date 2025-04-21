@@ -68,28 +68,28 @@ const ParkingLotApp = () => {
   ]);
 
   // Fetch parking predictions
-  const fetchPredictions = async () => {
-    try {
-      const response = await axios.get('http://localhost:3001/api/predictions');
-      const updatedLots = response.data;
+  // const fetchPredictions = async () => {
+  //   try {
+  //     const response = await axios.get('http://localhost:3001/api/predictions');
+  //     const updatedLots = response.data;
       
-      setParkingLots(prevLots => 
-        prevLots.map(lot => {
-          const updatedLot = updatedLots.find(u => u.name === lot.name);
-          return updatedLot ? { ...lot, ...updatedLot } : lot;
-        })
-      );
-    } catch (error) {
-      console.error('Error fetching predictions:', error);
-    }
-  };
+  //     setParkingLots(prevLots => 
+  //       prevLots.map(lot => {
+  //         const updatedLot = updatedLots.find(u => u.name === lot.name);
+  //         return updatedLot ? { ...lot, ...updatedLot } : lot;
+  //       })
+  //     );
+  //   } catch (error) {
+  //     console.error('Error fetching predictions:', error);
+  //   }
+  // };
 
-  // Fetch predictions on component mount and every minute
-  useEffect(() => {
-    fetchPredictions();
-    const interval = setInterval(fetchPredictions, 60000); // Update every minute
-    return () => clearInterval(interval);
-  }, []);
+  // // Fetch predictions on component mount and every minute
+  // useEffect(() => {
+  //   fetchPredictions();
+  //   const interval = setInterval(fetchPredictions, 60000); // Update every minute
+  //   return () => clearInterval(interval);
+  // }, []);
 
   useEffect(() => {
     // Set initial theme
@@ -207,29 +207,42 @@ const ParkingLotApp = () => {
       
       // Prepare travel times for prediction
       const travelTimes = {};
+      let i = 1
       results.forEach(route => {
-        travelTimes[route.lotName] = route.travelTime;
+        travelTimes[`garage${i}`] = route.travelTime;
+        i++;
       });
 
       // Get predictions based on travel times
       try {
-        const predictionResponse = await axios.post('http://localhost:3001/api/predictions', {
-          travelTimes: travelTimes
-        });
+        const predictionResponse = await axios.post('http://localhost:3000/predict', travelTimes);
         
         // Update parking lots with predictions
         const predictions = predictionResponse.data;
-        setParkingLots(prevLots => 
+        console.log("Received predictions from backend:", predictionResponse.data);
+
+        setParkingLots(prevLots =>
           prevLots.map(lot => {
-            const prediction = predictions.find(p => p.name === lot.name);
-            if (prediction) {
-              return {
-                ...lot,
-                spotsAvailable: prediction.spotsAvailable,
-                isFull: prediction.isFull
-              };
+            let garageKey;
+        
+            // Map lot names to the keys returned by backend
+            if (lot.name === 'Perry Street') {
+              garageKey = 'garage1';
+            } else if (lot.name === 'North End') {
+              garageKey = 'garage2';
+            } else if (lot.name === 'Kent Street') {
+              garageKey = 'garage3';
             }
-            return lot;
+        
+            const prediction = predictions[garageKey];
+        
+            return prediction
+              ? {
+                  ...lot,
+                  spotsAvailable: Math.round(prediction.expected_occupancy),
+                  isFull: prediction.expected_occupancy <= 0
+                }
+              : lot;
           })
         );
       } catch (error) {
