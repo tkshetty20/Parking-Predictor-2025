@@ -477,3 +477,23 @@ body.dark-mode {
   border-radius: 4px;
   display: inline-block;
 } 
+
+body.dark-mode .leaflet-tile {
+  filter: invert(90%) hue-rotate(180deg) brightness(85%) contrast(95%);
+}
+
+.gmaps-btn {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background-color: #E5751F; /* Google blue */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.gmaps-btn:hover {
+  background-color: #FF8C1F;
+}

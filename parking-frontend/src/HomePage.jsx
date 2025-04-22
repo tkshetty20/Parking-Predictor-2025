@@ -36,6 +36,7 @@ const ParkingLotApp = () => {
   const [routes, setRoutes] = useState([]);
   const [isLoadingRoutes, setIsLoadingRoutes] = useState(false);
   const [visibleRoutes, setVisibleRoutes] = useState([]);
+  const [directionsReady, setDirectionsReady] = useState(false);
   const profileRef = useRef(null);
   const mapRef = useRef(null);
 
@@ -47,7 +48,7 @@ const ParkingLotApp = () => {
       isFull: false,
       location: [37.23086, -80.42565], // Perry Street Parking Garage exact coordinates
       address: 'Perry Street, Blacksburg, VA',
-      color: '#FF0000'
+      color: '#3F8EF2'
     },
     {
       name: 'North End',
@@ -55,7 +56,7 @@ const ParkingLotApp = () => {
       isFull: false,
       location: [37.233211, -80.420061], // North End Center Parking exact coordinates
       address: 'North End Center, Blacksburg, VA',
-      color: '#00FF00'
+      color: '#FF9333'
     },
     {
       name: 'Kent Street',
@@ -63,7 +64,7 @@ const ParkingLotApp = () => {
       isFull: false,
       location: [37.227811, -80.413660], // Kent Square Parking Garage exact coordinates
       address: '207 Draper Rd SW, Blacksburg, VA 24060',
-      color: '#0000FF'
+      color: '#FF5E5E'
     }
   ]);
 
@@ -268,6 +269,7 @@ const ParkingLotApp = () => {
       alert('Error calculating routes. Please try again.');
     } finally {
       setIsLoadingRoutes(false);
+      setDirectionsReady(true);
     }
   };
 
@@ -363,7 +365,7 @@ const ParkingLotApp = () => {
       <div className="app-content">
         <MapContainer 
           center={[37.2295, -80.4139]} 
-          zoom={13} 
+          zoom={15} 
           className="map-container"
           ref={mapRef}
         >
@@ -417,6 +419,7 @@ const ParkingLotApp = () => {
                 value={recommendationPriority}
                 onChange={(e) => setRecommendationPriority(e.target.value)}
               >
+                <option value="no-priority">No Priority</option>
                 <option value="occupancy">Available Spots</option>
                 <option value="time">Travel Time</option>
                 <option value="distance">Distance</option>
@@ -462,26 +465,20 @@ const ParkingLotApp = () => {
                       <p>{recommendedLot.spotsAvailable} spots available</p>
                     </>
                   )}
+                  <button
+                    hidden={!directionsReady}
+                    className="gmaps-btn"
+                    onClick={() => {
+                      const originEncoded = encodeURIComponent(startingLocation === 'home' ? userProfile.address : startingLocation);
+                      const destinationEncoded = encodeURIComponent(recommendedLot.address);
+                      window.open(`https://www.google.com/maps/dir/?api=1&origin=${originEncoded}&destination=${destinationEncoded}&travelmode=driving`, '_blank');
+                    }}
+                  >
+                    Open in Google Maps
+                  </button>
                 </div>
               </div>
             )}
-          </div>
-
-          <div className="parking-lots">
-            {parkingLots.map((lot) => (
-              <div 
-                key={lot.name} 
-                className={`lot-info ${lot.isFull ? 'lot-full' : 'lot-available'}`}
-              >
-                <h3>{lot.name}</h3>
-                <p>
-                  {lot.isFull 
-                    ? 'Lot Full!' 
-                    : `${lot.spotsAvailable} Spots Available`
-                  }
-                </p>
-              </div>
-            ))}
           </div>
         </div>
       </div>
