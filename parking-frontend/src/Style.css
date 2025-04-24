@@ -187,7 +187,7 @@ body.dark-mode {
   font-weight: 600;
 }
 
-.input-box select {
+.input-box input {
   width: 100%;
   padding: 10px;
   border: 1px solid var(--current-hover);
@@ -195,6 +195,64 @@ body.dark-mode {
   background-color: var(--current-bg);
   color: var(--current-text);
   font-size: 14px;
+  box-sizing: border-box;
+}
+
+.input-box input:focus {
+  outline: none;
+  border-color: var(--current-accent);
+  box-shadow: 0 0 0 2px rgba(134, 31, 65, 0.2);
+}
+
+.input-box input::placeholder {
+  color: var(--current-text);
+  opacity: 0.6;
+}
+
+.input-box select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--current-hover);
+  border-radius: 6px;
+  background-color: var(--current-bg);
+  color: var(--current-text);
+  font-size: 14px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23861F41' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+  transition: all 0.2s ease;
+}
+
+.input-box select:focus {
+  outline: none;
+  border-color: var(--current-accent);
+  box-shadow: 0 0 0 3px rgba(134, 31, 65, 0.2);
+}
+
+.input-box select:hover {
+  border-color: var(--current-accent);
+}
+
+.input-box select option {
+  padding: 8px;
+  background-color: var(--current-bg);
+  color: var(--current-text);
+}
+
+/* Dark mode specific styles */
+body.dark-mode .input-box select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+/* Remove the default arrow in IE */
+.input-box select::-ms-expand {
+  display: none;
 }
 
 .recommended-lot {
@@ -476,7 +534,7 @@ body.dark-mode {
   background-color: var(--current-bg);
   border-radius: 4px;
   display: inline-block;
-} 
+}
 
 body.dark-mode .leaflet-tile {
   filter: invert(90%) hue-rotate(180deg) brightness(85%) contrast(95%);
@@ -498,6 +556,7 @@ body.dark-mode .leaflet-tile {
   background-color: #FF8C1F;
 }
 
+<<<<<<< HEAD
 .confirm-dialog {
   position: fixed;
   z-index: 1001;
@@ -554,4 +613,96 @@ body.dark-mode .leaflet-tile {
   padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
+=======
+.current-location-marker {
+  background: none;
+  border: none;
+}
+
+.current-location-dot {
+  width: 12px;
+  height: 12px;
+  background-color: #4285F4;
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #4285F4;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.location-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--current-hover);
+  border-radius: 6px;
+  background-color: var(--current-bg);
+  color: var(--current-text);
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.location-input:focus {
+  outline: none;
+  border-color: var(--current-accent);
+  box-shadow: 0 0 0 3px rgba(134, 31, 65, 0.2);
+}
+
+/* Google Places Autocomplete dropdown styles */
+.pac-container {
+  background-color: var(--current-bg);
+  border: 1px solid var(--current-hover);
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 4px;
+  z-index: 1000;
+}
+
+.pac-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--current-hover);
+  color: var(--current-text);
+}
+
+.pac-item:hover {
+  background-color: var(--current-hover);
+}
+
+.pac-item-query {
+  color: var(--current-text);
+  font-size: 14px;
+}
+
+.pac-matched {
+  font-weight: bold;
+  color: var(--current-accent);
+}
+
+/* Dark mode specific styles */
+body.dark-mode .pac-container {
+  background-color: var(--dark-sidebar);
+  border-color: var(--dark-hover);
+}
+
+body.dark-mode .pac-item {
+  border-bottom-color: var(--dark-hover);
+}
+
+body.dark-mode .pac-item:hover {
+  background-color: var(--dark-hover);
+>>>>>>> a2ff282dfb1b84ed6b4abfe8ee7f09c26cd4c7d0
 }

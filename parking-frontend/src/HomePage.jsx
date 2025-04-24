@@ -30,6 +30,7 @@ const ParkingLotApp = ({ user, onLogout }) => {
     address: ''
   });
   const [startingLocation, setStartingLocation] = useState('');
+  const [manualLocation, setManualLocation] = useState('');
   const [recommendationPriority, setRecommendationPriority] = useState('occupancy');
   const [routes, setRoutes] = useState([]);
   const [isLoadingRoutes, setIsLoadingRoutes] = useState(false);
@@ -37,6 +38,8 @@ const ParkingLotApp = ({ user, onLogout }) => {
   const [directionsReady, setDirectionsReady] = useState(false);
   const profileRef = useRef(null);
   const mapRef = useRef(null);
+  const manualLocationRef = useRef(null);
+  const autocompleteRef = useRef(null);
 
   // Parking lots state with coordinates
   const [parkingLots, setParkingLots] = useState([
@@ -109,6 +112,38 @@ const ParkingLotApp = ({ user, onLogout }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (startingLocation === 'manual' && manualLocationRef.current) {
+      // Initialize Google Places Autocomplete
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(
+        manualLocationRef.current,
+        {
+          types: ['address'],
+          componentRestrictions: { country: 'us' },
+          bounds: new window.google.maps.LatLngBounds(
+            new window.google.maps.LatLng(37.20, -80.45), // Southwest corner
+            new window.google.maps.LatLng(37.25, -80.40)  // Northeast corner
+          ),
+        }
+      );
+
+      // Add listener for when a place is selected
+      autocompleteRef.current.addListener('place_changed', () => {
+        const place = autocompleteRef.current.getPlace();
+        if (place.formatted_address) {
+          setManualLocation(place.formatted_address);
+        }
+      });
+    }
+
+    // Cleanup
+    return () => {
+      if (autocompleteRef.current) {
+        window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
+      }
+    };
+  }, [startingLocation]);
+
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
     document.body.classList.toggle('dark-mode', !isDarkMode);
@@ -148,8 +183,18 @@ const ParkingLotApp = ({ user, onLogout }) => {
   };
 
   const findRoutes = async () => {
-    if (!startingLocation || !userProfile.address) {
-      alert('Please select a starting location and ensure your address is set in your profile');
+    if (!startingLocation) {
+      alert('Please select a starting location');
+      return;
+    }
+
+    if (startingLocation === 'manual' && !manualLocation) {
+      alert('Please enter your current location');
+      return;
+    }
+
+    if (startingLocation === 'home' && !userProfile.address) {
+      alert('Please set your home address in your profile');
       return;
     }
 
@@ -169,7 +214,9 @@ const ParkingLotApp = ({ user, onLogout }) => {
 
       const origin = startingLocation === 'home' 
         ? formatAddress(userProfile.address) 
-        : formatAddress(startingLocation);
+        : startingLocation === 'manual'
+          ? formatAddress(manualLocation)
+          : formatAddress(startingLocation);
       
       const directionsService = new window.google.maps.DirectionsService();
 
@@ -409,8 +456,23 @@ const ParkingLotApp = ({ user, onLogout }) => {
                 <option value="home">My Home</option>
                 <option value="campus-center">Campus Center</option>
                 <option value="library">Library</option>
+                <option value="manual">Enter Location Manually</option>
               </select>
             </div>
+
+            {startingLocation === 'manual' && (
+              <div className="input-box">
+                <label>Enter Your Current Location</label>
+                <input
+                  ref={manualLocationRef}
+                  type="text"
+                  value={manualLocation}
+                  onChange={(e) => setManualLocation(e.target.value)}
+                  placeholder="Enter your current location in Blacksburg"
+                  className="location-input"
+                />
+              </div>
+            )}
 
             <div className="input-box">
               <label>Recommendation Priority</label>
