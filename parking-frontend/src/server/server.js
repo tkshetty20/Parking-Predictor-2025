@@ -64,6 +64,40 @@ app.post('/api/login', (req, res) => {
   );
 });
 
+// Sign Up Route
+app.post('/api/signup', (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({
+      success: false,
+      message: 'Username and password are required'
+    });
+  }
+
+  const stmt = db.prepare('INSERT INTO users (username, password) VALUES (?, ?)');
+  stmt.run([username, password], function (err) {
+    if (err) {
+      if (err.code === 'SQLITE_CONSTRAINT') {
+        return res.status(409).json({
+          success: false,
+          message: 'Username already taken'
+        });
+      }
+      return res.status(500).json({
+        success: false,
+        message: 'Database error'
+      });
+    }
+
+    return res.status(201).json({
+      success: true,
+      user: { username },
+      message: 'User created successfully'
+    });
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

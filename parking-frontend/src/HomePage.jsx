@@ -18,14 +18,12 @@ const DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const ParkingLotApp = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [username, setUsername] = useState('Guest');
-  const [password, setPassword] = useState('');
+const ParkingLotApp = ({ user, onLogout }) => {
   const [error, setError] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [userProfile, setUserProfile] = useState({
     name: 'Guest',
     email: '',
@@ -121,10 +119,11 @@ const ParkingLotApp = () => {
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUsername('');
-    setPassword('');
-    setShowProfileMenu(false);
+    const confirmLogout = window.confirm('Are you sure you want to log out?');
+    if (confirmLogout) {
+      onLogout();
+      setShowProfileMenu(false);
+    }
   };
 
   const handleEditAccount = () => {
@@ -354,7 +353,7 @@ const ParkingLotApp = () => {
               <button onClick={handleEditAccount}>
                 <i className="fas fa-edit"></i> Edit Account
               </button>
-              <button onClick={handleLogout}>
+              <button onClick={() => setShowLogoutConfirm(true)}>
                 <i className="fas fa-sign-out-alt"></i> Log Out
               </button>
             </div>
@@ -542,6 +541,32 @@ const ParkingLotApp = () => {
           </div>
         </>
       )}
+      {showLogoutConfirm && (
+  <>
+    <div className="dialog-overlay" onClick={() => setShowLogoutConfirm(false)} />
+    <div className="confirm-dialog">
+      <h3>Confirm Logout</h3>
+      <p>Are you sure you want to log out of Parking Predictor?</p>
+      <div className="dialog-buttons">
+        <button
+          className="cancel-button"
+          onClick={() => setShowLogoutConfirm(false)}
+        >
+          Cancel
+        </button>
+        <button
+          className="confirm-button"
+          onClick={() => {
+            onLogout();
+            setShowLogoutConfirm(false);
+          }}
+        >
+          Yes, Log Out
+        </button>
+      </div>
+    </div>
+  </>
+)}
     </div>
   );
 };
