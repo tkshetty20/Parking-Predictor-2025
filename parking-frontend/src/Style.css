@@ -613,7 +613,8 @@ body.dark-mode .leaflet-tile {
   padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
-=======
+
+}
 .current-location-marker {
   background: none;
   border: none;
@@ -704,5 +705,5 @@ body.dark-mode .pac-item {
 
 body.dark-mode .pac-item:hover {
   background-color: var(--dark-hover);
->>>>>>> a2ff282dfb1b84ed6b4abfe8ee7f09c26cd4c7d0
+/*>>>>>>> a2ff282dfb1b84ed6b4abfe8ee7f09c26cd4c7d0*/
 }
