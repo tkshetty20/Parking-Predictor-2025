@@ -556,7 +556,6 @@ body.dark-mode .leaflet-tile {
   background-color: #FF8C1F;
 }
 
-<<<<<<< HEAD
 .confirm-dialog {
   position: fixed;
   z-index: 1001;
@@ -705,5 +704,4 @@ body.dark-mode .pac-item {
 
 body.dark-mode .pac-item:hover {
   background-color: var(--dark-hover);
-/*>>>>>>> a2ff282dfb1b84ed6b4abfe8ee7f09c26cd4c7d0*/
 }
