@@ -520,7 +520,7 @@ const ParkingLotApp = ({ user, onLogout }) => {
                 value={recommendationPriority}
                 onChange={(e) => setRecommendationPriority(e.target.value)}
               >
-                <option value="no-priority">No Priority</option>
+                <option value="average">No Priority</option>
                 <option value="occupancy">Available Spots</option>
                 <option value="time">Travel Time</option>
                 <option value="distance">Distance</option>
