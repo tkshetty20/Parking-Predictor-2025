@@ -113,6 +113,29 @@ const ParkingLotApp = ({ user, onLogout }) => {
   }, []);
 
   useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch(`http://localhost:3000/users/${user.username}`);
+        if (res.ok) {
+          const data = await res.json();
+          setUserProfile({
+            name: data.name || '',
+            email: data.email || '',
+            address: data.address || ''
+          });
+        }
+      } catch (err) {
+        console.error('Error loading profile:', err);
+      }
+    };
+  
+    if (user && user.username) {
+      fetchProfile();
+    }
+  }, [user]);
+  
+
+  useEffect(() => {
     if (startingLocation === 'manual' && manualLocationRef.current) {
       // Initialize Google Places Autocomplete
       autocompleteRef.current = new window.google.maps.places.Autocomplete(
@@ -166,8 +189,25 @@ const ParkingLotApp = ({ user, onLogout }) => {
     setShowProfileMenu(false);
   };
 
-  const handleSaveProfile = () => {
-    setShowEditProfile(false);
+  const handleSaveProfile = async () => {
+    try {
+      await fetch(`http://localhost:3000/users/${user.username}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: userProfile.name,
+          email: userProfile.email,
+          address: userProfile.address
+        })
+      });
+
+      alert('Profile updated successfully!');
+      setShowEditProfile(false);
+    } catch (err) {
+      console.error('Error updating profile', err);
+      alert('Failed to update profile.')
+    }
+    
   };
 
   const handleCancelEdit = () => {
