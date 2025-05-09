@@ -1,0 +1,23 @@
+services:
+  parking-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: parking-app
+    ports:
+      - "3000:3000"   # Express backend
+      - "3002:3002"   # React frontend
+      - "5000:5000"   # Flask ML service
+      - "3306:3306"   # MySQL
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: "mydb"
+      MYSQL_USER: "myuser"
+      MYSQL_PASSWORD: "mypassword"
+      MYSQL_ROOT_PASSWORD: "myrootpassword"
+    stdin_open: true
+    tty: true
+
+volumes:
+  mysql-data:
