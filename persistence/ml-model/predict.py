@@ -249,7 +249,7 @@ def predict():
         'occupancy': {'occupancy': 0.6, 'time': 0.2, 'distance': 0.2},
         'time':      {'occupancy': 0.2, 'time': 0.6, 'distance': 0.2},
         'distance':  {'occupancy': 0.2, 'time': 0.2, 'distance': 0.6},
-        'average':   {'occupancy': 0.5, 'time': 0.5, 'distance': 0.5}
+        'average':   {'occupancy': 0.3, 'time': 0.3, 'distance': 0.3}
     }
 
     w = weights.get(priority, weights['occupancy'])  # fallback to occupancy
